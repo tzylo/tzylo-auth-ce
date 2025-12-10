@@ -1,0 +1,29 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/mysql/@prisma/client"
+}
+
+model Auth {
+  id            String    @id @default(cuid())
+  email         String    @unique @db.VarChar(191)
+  password      String    @db.Text
+
+  isVerified    Boolean   @default(false) @map("is_verified")
+  provider      String    @default("local") @db.VarChar(100)
+  role          String?   @default("user") @db.VarChar(100)
+
+  refreshToken  String?   @map("refresh_token") @db.Text
+  lastLoginAt   DateTime? @map("last_login_at")
+
+  metadata      Json?     
+
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt      @map("updated_at")
+
+  @@map("auth")
+}
