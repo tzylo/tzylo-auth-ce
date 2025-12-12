@@ -139,6 +139,10 @@ const config = {
         "fromEnvVar": null,
         "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "debian-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
@@ -165,8 +169,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "datasource db {\n  provider = \"sqlserver\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/sqlserver/@prisma/client\"\n}\n\nmodel Auth {\n  id       String @id @default(cuid())\n  email    String @unique @db.NVarChar(255)\n  password String @db.NVarChar(4000)\n\n  isVerified Boolean @default(false) @map(\"is_verified\")\n  provider   String  @default(\"local\") @db.NVarChar(100)\n  role       String? @default(\"user\") @db.NVarChar(100)\n\n  refreshToken String?   @map(\"refresh_token\") @db.NVarChar(4000)\n  lastLoginAt  DateTime? @map(\"last_login_at\")\n\n  metadata String?\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"auth\")\n}\n",
-  "inlineSchemaHash": "ac233ff7c34d4fffeb1380233ab3ef87430f6e2fbd7af01269c03fe1a8899cb8",
+  "inlineSchema": "datasource db {\n  provider = \"sqlserver\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider      = \"prisma-client-js\"\n  binaryTargets = [\"native\", \"debian-openssl-3.0.x\"]\n  output        = \"../generated/sqlserver/@prisma/client\"\n}\n\nmodel Auth {\n  id       String @id @default(cuid())\n  email    String @unique @db.NVarChar(255)\n  password String @db.NVarChar(4000)\n\n  isVerified Boolean @default(false) @map(\"is_verified\")\n  provider   String  @default(\"local\") @db.NVarChar(100)\n  role       String? @default(\"user\") @db.NVarChar(100)\n\n  refreshToken String?   @map(\"refresh_token\") @db.NVarChar(4000)\n  lastLoginAt  DateTime? @map(\"last_login_at\")\n\n  metadata String?\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"auth\")\n}\n",
+  "inlineSchemaHash": "6e464d38a6f6aacaadb5b4cc0652eb852b45e93b3863b5636f95e08a567fd2a5",
   "copyEngine": true
 }
 config.dirname = '/'

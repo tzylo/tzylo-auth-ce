@@ -11,7 +11,7 @@
     "test:coverage": "jest --coverage",
     "test:clear": "jest --clearCache",
     "dev": "tsx watch src/server.ts",
-    "db:generate": "tsx src/scripts/multi-db.ts",
+    "db:generate": "tsx scripts/multi-db.ts",
     "build": "tsup src/server.ts --format cjs,esm --dts",
     "start": "node dist/server.js"
   },

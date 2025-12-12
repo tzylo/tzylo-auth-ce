@@ -11,7 +11,7 @@ function generateFor(db: string) {
   log(`\n🔧 Generating client for: ${db}`);
 
   execSync(
-    `npx prisma generate --schema prisma/schema.${db}.prisma --no-engine-check`,
+    `npx prisma generate --schema prisma/schema.${db}.prisma`,
     { stdio: "inherit" }
   );
 

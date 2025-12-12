@@ -105,7 +105,7 @@ export async function bootstrapDatabase() {
         console.error("❌ Failed to create auth table.");
 
         if (err instanceof Error) {
-          const message = err.message.split("\n")[0]+err.message.split("\n")[1];
+          const message = err.message;
 
           console.error("Reason:", message);
         }
