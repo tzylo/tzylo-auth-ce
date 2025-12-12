@@ -1,15 +1,9 @@
-import fs from "fs";
-import path from "path";
-import { execSync } from "child_process";
 import { db } from "./db";
 import { ENV } from "../config/env";
 
 export async function bootstrapDatabase() {
   const dialect = ENV.DB_DIALECT;
 
-  // ------------------------------------------------
-  // SQLITE TABLE (matches your Prisma SQLite schema)
-  // ------------------------------------------------
   const SQLITE_TABLE = `
     CREATE TABLE IF NOT EXISTS auth (
       id TEXT PRIMARY KEY,
@@ -26,9 +20,6 @@ export async function bootstrapDatabase() {
     );
   `;
 
-  // ------------------------------------------------
-  // POSTGRES TABLE (matches your PostgreSQL schema)
-  // ------------------------------------------------
   const POSTGRES_TABLE = `
     CREATE TABLE IF NOT EXISTS auth (
       id VARCHAR(255) PRIMARY KEY,
@@ -45,9 +36,6 @@ export async function bootstrapDatabase() {
     );
   `;
 
-  // ------------------------------------------------
-  // MYSQL TABLE (matches your MySQL schema)
-  // ------------------------------------------------
   const MYSQL_TABLE = `
     CREATE TABLE IF NOT EXISTS auth (
       id VARCHAR(255) PRIMARY KEY,
@@ -64,9 +52,6 @@ export async function bootstrapDatabase() {
     );
   `;
 
-  // ------------------------------------------------
-  // SQL SERVER TABLE (matches your SQLServer schema)
-  // ------------------------------------------------
   const SQLSERVER_TABLE = `
     IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='auth' AND xtype='U')
     CREATE TABLE auth (
@@ -84,62 +69,58 @@ export async function bootstrapDatabase() {
     );
   `;
 
-  // ==========================================================
-  // 1. SQLITE MODE → You control schema fully (use Prisma push)
-  // ==========================================================
-  // if (dialect === "sqlite") {
-  //   const isFileUrl = ENV.DATABASE_URL.startsWith("file:");
-  //   if (isFileUrl) {
-  //     const dbFile = ENV.DATABASE_URL.replace("file:", "");
-  //     const absolute = path.isAbsolute(dbFile)
-  //       ? dbFile
-  //       : path.join(process.cwd(), dbFile);
-
-  //     const dir = path.dirname(absolute);
-  //     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-
-  //     console.log("🔄 Running SQLite schema sync...");
-  //     execSync("npx prisma db push --schema=./prisma/schema.prisma", {
-  //       stdio: "ignore",
-  //     });
-
-  //     console.log("✅ SQLite database ready.");
-  //     return;
-  //   }
-  // }
-
-  // ==========================================================
-  // 2. EXTERNAL DBs → Safe runtime table creation
-  // ==========================================================
   try {
     await db.auth.findFirst();
-    console.log("🗄️ Auth table exists. Database ready.");
-  } catch (err) {
+    console.log("🗄️ Database ready.");
+    return;
+  } catch {
     console.log("⚠️ Auth table missing. Creating...");
-
-    let sql: string;
-
-    switch (dialect) {
-      case "postgres":
-      case "postgresql":
-        sql = POSTGRES_TABLE;
-        break;
-
-      case "mysql":
-        sql = MYSQL_TABLE;
-        break;
-
-      case "sqlserver":
-        sql = SQLSERVER_TABLE;
-        break;
-
-      default:
-        console.error(`❌ Unsupported DB dialect: ${dialect}`);
-        process.exit(1);
-    }
-
-    await db.$executeRawUnsafe(sql);
-
-    console.log("✅ Auth table created successfully.");
   }
+
+  let sql: string;
+
+  switch (dialect) {
+    case "sqlite":
+      sql = SQLITE_TABLE;
+      break;
+    case "postgres":
+    case "postgresql":
+      sql = POSTGRES_TABLE;
+      break;
+    case "mysql":
+      sql = MYSQL_TABLE;
+      break;
+    case "sqlserver":
+      sql = SQLSERVER_TABLE;
+      break;
+    default:
+      console.error(`❌ Unsupported DB dialect: ${dialect}`);
+      process.exit(1);
+  }
+
+  try {
+        await db.$executeRawUnsafe(sql);
+        console.log("✅ Auth table created successfully.");
+      } catch (err: any) {
+        console.error("❌ Failed to create auth table.");
+
+        if (err instanceof Error) {
+          const message = err.message.split("\n")[0]+err.message.split("\n")[1];
+
+          console.error("Reason:", message);
+        }
+
+        console.error(
+          `🔧 Possible causes:
+          • Database server is not reachable
+          • DATABASE_URL is incorrect
+          • User does not have CREATE TABLE permission
+          • SQL syntax not supported by this DB engine
+          `
+        );
+
+        process.exit(1);
+      }
+
+  console.log("✅ Auth table created successfully.");
 }

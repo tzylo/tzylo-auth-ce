@@ -5,16 +5,13 @@ WORKDIR /app
 
 RUN apt-get update -y && apt-get install -y openssl
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 COPY tsconfig.json .
 COPY src ./src
-COPY prisma/schema.prisma ./prisma/schema.prisma
-COPY data ./data
 COPY generated ./generated
 
 RUN pnpm build
-
 
 
 FROM node:20-slim
@@ -23,15 +20,10 @@ RUN corepack enable
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --prod
+RUN pnpm install --prod --frozen-lockfile
 
 COPY --from=builder /app/dist ./dist
-
-COPY tsconfig.json .
 COPY generated ./generated
-COPY prisma/schema.prisma ./prisma/schema.prisma
-COPY data ./data
-COPY src ./src
 
 EXPOSE 7200
 CMD ["node", "dist/server.js"]
