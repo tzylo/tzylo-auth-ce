@@ -1,13 +1,9 @@
-import "../config/init-env";
 import { ENV } from "../config/env";
 import { TzyloError } from "../errors/Tzylo.error";
 import { TzyloDBError } from "../errors/TzyloDBError";
 
-const dbType = ENV.DB_DIALECT?.toLowerCase() || "sqlite";
+const dbType = ENV.DB_DIALECT?.toLowerCase() || "postgres";
 
-/*****************************************
- * 1. Load correct Prisma client per dialect
- *****************************************/
 function loadClient() {
   switch (dbType) {
     case "postgres":
@@ -32,12 +28,10 @@ function loadClient() {
 
 const SelectedClient = loadClient();
 const prisma = new SelectedClient({
-  log: [], // Keep logs clean
+  log: [],
 });
 
-/*****************************************
- * 2. Prisma → TzyloError converter for known cases
- *****************************************/
+
 function convertKnownPrismaError(e: any) {
   if (!e?.code) return null;
 
@@ -53,20 +47,18 @@ function convertKnownPrismaError(e: any) {
   }
 }
 
-/*****************************************
- * 3. Deep Proxy – wraps nested client delegates (auth, user, etc.)
- *****************************************/
+
 function wrapDeep(target: any): any {
   return new Proxy(target, {
     get(obj, prop) {
       const value = obj[prop];
 
-      // Non-function object → recurse (e.g. obj.auth)
+
       if (typeof value === "object" && value !== null) {
         return wrapDeep(value);
       }
 
-      // Function → wrap it
+
       if (typeof value === "function") {
         return (...args: any[]) => {
           try {
@@ -89,16 +81,12 @@ function wrapDeep(target: any): any {
         };
       }
 
-      // Normal property
+
       return value;
     },
   });
 }
 
-/*****************************************
- * 4. Final exported DB client
- *****************************************/
 export const db = wrapDeep(prisma);
 
-// Keep original client if needed internally
 export { prisma };

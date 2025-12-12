@@ -159,6 +159,10 @@ const config = {
         "fromEnvVar": null,
         "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "debian-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
@@ -185,8 +189,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "datasource db {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/mysql/@prisma/client\"\n}\n\nmodel Auth {\n  id       String @id @default(cuid())\n  email    String @unique @db.VarChar(191)\n  password String @db.Text\n\n  isVerified Boolean @default(false) @map(\"is_verified\")\n  provider   String  @default(\"local\") @db.VarChar(100)\n  role       String? @default(\"user\") @db.VarChar(100)\n\n  refreshToken String?   @map(\"refresh_token\") @db.Text\n  lastLoginAt  DateTime? @map(\"last_login_at\")\n\n  metadata Json?\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"auth\")\n}\n",
-  "inlineSchemaHash": "107d22a9f096707a79c9e77b7bec3efdb002142e8cb4d4477657e2843b30959f",
+  "inlineSchema": "datasource db {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider      = \"prisma-client-js\"\n  binaryTargets = [\"native\", \"debian-openssl-3.0.x\"]\n  output        = \"../generated/mysql/@prisma/client\"\n}\n\nmodel Auth {\n  id       String @id @default(cuid())\n  email    String @unique @db.VarChar(191)\n  password String @db.Text\n\n  isVerified Boolean @default(false) @map(\"is_verified\")\n  provider   String  @default(\"local\") @db.VarChar(100)\n  role       String? @default(\"user\") @db.VarChar(100)\n\n  refreshToken String?   @map(\"refresh_token\") @db.Text\n  lastLoginAt  DateTime? @map(\"last_login_at\")\n\n  metadata Json?\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"auth\")\n}\n",
+  "inlineSchemaHash": "e576a322024917924b19828191e4874d9efd61529c662ec2b547d7832ae64ce8",
   "copyEngine": true
 }
 
@@ -226,6 +230,10 @@ Object.assign(exports, Prisma)
 // file annotations for bundling tools to include these files
 path.join(__dirname, "query_engine-windows.dll.node");
 path.join(process.cwd(), "generated/mysql/@prisma/client/query_engine-windows.dll.node")
+
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-debian-openssl-3.0.x.so.node");
+path.join(process.cwd(), "generated/mysql/@prisma/client/libquery_engine-debian-openssl-3.0.x.so.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "generated/mysql/@prisma/client/schema.prisma")

@@ -154,6 +154,10 @@ const config = {
         "fromEnvVar": null,
         "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "debian-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
@@ -180,8 +184,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "datasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/postgresql/@prisma/client\"\n}\n\nmodel Auth {\n  id String @id @default(cuid())\n\n  email    String @unique\n  password String\n\n  isVerified Boolean @default(false) @map(\"is_verified\")\n  provider   String  @default(\"local\")\n  role       String? @default(\"user\")\n\n  refreshToken String?   @map(\"refresh_token\")\n  lastLoginAt  DateTime? @map(\"last_login_at\")\n\n  metadata Json?\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"auth\")\n}\n",
-  "inlineSchemaHash": "55ea2062348a549ca8a429571cec72ac8a68f505575015da1a2c96353bc92c70",
+  "inlineSchema": "datasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider      = \"prisma-client-js\"\n  binaryTargets = [\"native\", \"debian-openssl-3.0.x\"]\n  output        = \"../generated/postgresql/@prisma/client\"\n}\n\nmodel Auth {\n  id String @id @default(cuid())\n\n  email    String @unique\n  password String\n\n  isVerified Boolean @default(false) @map(\"is_verified\")\n  provider   String  @default(\"local\")\n  role       String? @default(\"user\")\n\n  refreshToken String?   @map(\"refresh_token\")\n  lastLoginAt  DateTime? @map(\"last_login_at\")\n\n  metadata Json?\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"auth\")\n}\n",
+  "inlineSchemaHash": "6ed415d11e382c38373bcaf2d4bf04c9f9a1e2d7b8357f50866b39af8c2264ea",
   "copyEngine": true
 }
 config.dirname = '/'

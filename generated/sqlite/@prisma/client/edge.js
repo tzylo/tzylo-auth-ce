@@ -135,6 +135,10 @@ const config = {
         "fromEnvVar": null,
         "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "debian-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
@@ -161,8 +165,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "datasource db {\n  provider = \"sqlite\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/sqlite/@prisma/client\"\n}\n\nmodel Auth {\n  id       String @id @default(cuid())\n  email    String @unique\n  password String\n\n  isVerified Boolean @default(false) @map(\"is_verified\")\n  provider   String  @default(\"local\")\n  role       String? @default(\"user\")\n\n  refreshToken String?   @map(\"refresh_token\")\n  lastLoginAt  DateTime? @map(\"last_login_at\")\n\n  metadata String?\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"auth\")\n}\n",
-  "inlineSchemaHash": "aca06c57cd13e60b62f7d03627339159a4392be1e4401a68f702e34d8af394f1",
+  "inlineSchema": "datasource db {\n  provider = \"sqlite\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider      = \"prisma-client-js\"\n  binaryTargets = [\"native\", \"debian-openssl-3.0.x\"]\n  output        = \"../generated/sqlite/@prisma/client\"\n}\n\nmodel Auth {\n  id       String @id @default(cuid())\n  email    String @unique\n  password String\n\n  isVerified Boolean @default(false) @map(\"is_verified\")\n  provider   String  @default(\"local\")\n  role       String? @default(\"user\")\n\n  refreshToken String?   @map(\"refresh_token\")\n  lastLoginAt  DateTime? @map(\"last_login_at\")\n\n  metadata String?\n\n  createdAt DateTime @default(now()) @map(\"created_at\")\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"auth\")\n}\n",
+  "inlineSchemaHash": "d6acd531c7da909674bb7aa4d1fa3474dd2e4be95aa26d5f7c83ff0594fef244",
   "copyEngine": true
 }
 config.dirname = '/'

@@ -1,17 +1,29 @@
-version: "3.9"
-
 services:
-  postgres:
+  db:
     image: postgres:15
-    restart: unless-stopped
+    container_name: tzylo-db
+    restart: always
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydb
+      POSTGRES_USER: tzylo
+      POSTGRES_PASSWORD: tzylo
+      POSTGRES_DB: tzylo
+    volumes:
+      - tzylo-db-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+
+  auth:
+    image: tzylo-auth-ce:latest
+    container_name: tzylo-auth
+    restart: always
+    environment:
+      DATABASE_URL: "postgresql://tzylo:tzylo@db:5432/tzylo"
+      JWT_SECRET: "supersecret"
+      NODE_ENV: "production"
+      PORT: "7200"
+      CORS_ORIGIN: "http://localhost:5173"
+    ports:
+      - "7200:7200"
 
 volumes:
-  pgdata:
+  tzylo-db-data:
