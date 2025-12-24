@@ -6,6 +6,28 @@ It focuses on **clarity**, **developer experience**, and **minimal configuration
 
 ---
 
+## 🔗 Important Links
+
+📘 **Documentation**
+👉 [https://docs.tzylo.com/auth/ce/docs/introduction](https://docs.tzylo.com/auth/ce/docs/introduction)
+
+🐳 **Docker Image**
+👉 [https://hub.docker.com/r/tzylo/auth-ce](https://hub.docker.com/r/tzylo/auth-ce)
+
+💻 **GitHub Repository**
+👉 [https://github.com/tzylo/tzylo-auth-ce](https://github.com/tzylo/tzylo-auth-ce)
+
+📦 **Node.js SDK**
+👉 [https://www.npmjs.com/package/@tzylo/auth-ce](https://www.npmjs.com/package/@tzylo/auth-ce)
+
+🧩 **Middleware Package**
+👉 [https://www.npmjs.com/package/@tzylo/auth-middleware](https://www.npmjs.com/package/@tzylo/auth-middleware)
+
+🧪 **Example Projects**
+👉 [https://github.com/tzylo/auth-ce-examples](https://github.com/tzylo/auth-ce-examples)
+
+---
+
 ## 🚀 Features
 
 ### **🔐 Multi-Database Support**
@@ -13,7 +35,7 @@ Works with multiple SQL databases out of the box:
 - PostgreSQL  
 - MySQL  
 - SQL Server  
-- **SQLite (fallback automatically when no DATABASE_URL is provided)**
+- SQLite
 
 ### **📧 Email (OTP) Support**
 - Integrated with **Nodemailer**
@@ -35,11 +57,12 @@ Works with multiple SQL databases out of the box:
 Protects against brute force & abuse.
 
 ### **⚙️ Minimal Configuration Required**
-Only **one required config**:
+Only **two required config**:
 
 ```
 
 JWT_SECRET=your-secret
+DATABASE_URL=postgres://user:pass@localhost:5432/authdb
 
 ````
 
@@ -131,14 +154,31 @@ If no `DATABASE_URL` is provided, **SQLite is used automatically**.
 
 ## ⚙️ Environment Variables
 
-| Variable                                | Required | Description                           |
-| --------------------------------------- | -------- | ------------------------------------- |
-| `JWT_SECRET`                            | **Yes**  | Used to sign access tokens            |
-| `DATABASE_URL`                          | No       | If missing → SQLite fallback          |
-| `REDIS_URL`                             | No       | Used for caching (in-memory fallback) |
-| `SMTP_HOST` / `SMTP_USER` / `SMTP_PASS` | No       | Email service for OTP                 |
+Below is the complete list of environment variables supported by **Tzylo Auth CE**.
+
+| Variable                     | Required | Default          | Description                                                                            |
+| ---------------------------- | -------- | ---------------- | -------------------------------------------------------------------------------------- |
+| **JWT_SECRET**               | **Yes**  | —                | Secret key used to sign JWT access tokens.                                             |
+| **DATABASE_URL**             | **Yes**  | —                | Database connection string (`postgresql://`, `mysql://`, `sqlserver://`, `sqlite://`). |
+| **CORS_ORIGIN**              | No       | `*`              | Allowed CORS origins.                                                                  |
+| **NODE_ENV**                 | No       | `development`    | Application environment mode.                                                          |
+| **RATE_LIMIT**               | No       | `true`           | Enables built-in rate limiting middleware.                                             |
+| **RATE_LIMIT_ENABLED**       | No       | `true`           | Additional toggle for rate limiting.                                                   |
+| **ACCESS_TOKEN_EXPIRES_IN**  | No       | `15m`            | Access token lifetime (`ms`, `m`, `h`, `d` supported).                                 |
+| **REFRESH_TOKEN_EXPIRES_IN** | No       | `7d`             | Refresh token lifetime.                                                                |
+| **BCRYPT_SALT_ROUNDS**       | No       | `10`             | Salt rounds used for password hashing.                                                 |
+| **SMTP_HOST**                | No       | `smtp.gmail.com` | SMTP host for sending OTP emails.                                                      |
+| **SMTP_PORT**                | No       | `587`            | SMTP port.                                                                             |
+| **SMTP_USERNAME**            | No       | —                | SMTP login username.                                                                   |
+| **SMTP_PASSWORD**            | No       | —                | SMTP login password.                                                                   |
+| **REDIS_URL**                | No       | —                | Redis connection URL (optional; in-memory fallback used if empty).                     |
+| **REDIS_MAX_RETRIES**        | No       | `1`              | Maximum retry attempts for Redis connection.                                           |
+| **APP_NAME**                 | No       | `Tzylo`          | Application name used in emails and metadata.                                          |
+| **COOKIE_SECRET**            | No       | —                | Cookie signing secret (for session-based flows).                                       |
+| **COOKIE_SAME_SITE**         | No       | —                | Cookie SameSite policy (`Lax`, `Strict`, `None`).                                      |
 
 ---
+
 
 ## 🧪 API Routes (Built-in)
 
@@ -150,6 +190,8 @@ If no `DATABASE_URL` is provided, **SQLite is used automatically**.
 * `POST /verify-otp`
 * `POST /forgot-password`
 * `POST /set-new-password`
+* `POST /refresh`
+* `GET /health/db`
 
 Designed to be easy to understand and extend.
 
@@ -177,15 +219,6 @@ MIT — free to use and modify.
 
 ---
 
-## 🌱 Roadmap
-
-* Improve TypeScript SDK
-* Add more providers (OAuth / Passwordless)
-* Add optional queues for async email
-* Enhance admin dashboard
-* Add production-grade metrics
-
----
 
 ## 🤝 Contributing
 
