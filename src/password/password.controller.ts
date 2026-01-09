@@ -9,7 +9,6 @@ class PasswordController {
 
       if (!email) {
         return reply.status(400).send({
-          success: false,
           message: "Email is required",
         });
       }
@@ -19,7 +18,6 @@ class PasswordController {
       await OtpService.generateOtp(normalizedEmail, "forgot-password");
 
       return reply.send({
-        success: true,
         message: "Password reset OTP sent",
       });
     } catch (err: any) {
@@ -40,7 +38,6 @@ class PasswordController {
 
       if (!email || !otp || !newPassword) {
         return reply.status(400).send({
-          success: false,
           message: "Email, OTP, and new password are required",
         });
       }
@@ -55,7 +52,6 @@ class PasswordController {
 
       if (!isValid) {
         return reply.status(400).send({
-          success: false,
           message: "Invalid or expired OTP",
         });
       }
@@ -63,12 +59,10 @@ class PasswordController {
       await PasswordService.setNewPassword(normalizedEmail, newPassword);
 
       return reply.send({
-        success: true,
         message: "Password updated successfully",
       });
     } catch (err: any) {
       return reply.status(400).send({
-        success: false,
         message: err.message || "Failed to update password",
       });
     }

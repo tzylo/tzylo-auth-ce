@@ -18,16 +18,14 @@ export class AuthController {
     );
 
     return reply.code(201).send({
-      success: true,
-      message: "Account created",
-      data: {
         user: {
           id: result.user.id,
           email: result.user.email,
+          isVerified: result.user.isVerified,
+          role: result.user.role
         },
         accessToken: result.accessToken,
-      },
-    });
+      });
   }
 
   async login(req: FastifyRequest, reply: FastifyReply) {
@@ -42,15 +40,13 @@ export class AuthController {
     );
 
     return reply.send({
-      success: true,
-      message: "Login successful",
-      data: {
         user: {
           id: result.user.id,
           email: result.user.email,
+          isVerified: result.user.isVerified,
+          role: result.user.role
         },
         accessToken: result.accessToken,
-      },
     });
   }
 
@@ -78,9 +74,12 @@ export class AuthController {
       const result = await authService.verifyEmail(normalizedEmail);
 
       return reply.send({
-        success: true,
-        message: "Email verified successfully",
-        result,
+        user : {
+          id: result.user.id,
+          email: result.user.email,
+          isVerified: result.user.isVerified,
+          role: result.user.role
+        }
       });
     } catch (err: any) {
       console.error("Verify Email Error:", err.message);

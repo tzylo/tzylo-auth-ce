@@ -17,8 +17,7 @@ class OtpController {
       await OtpService.generateOtp(normalizedEmail);
 
       return reply.send({
-        success: true,
-        message: "OTP sent successfully",
+        message: "If an account exists, an OTP has been sent",
       });
     } catch (err: any) {
       console.error("Send OTP Error:", err.message);

@@ -31,8 +31,7 @@ export function errorHandler(
   }
 
   return reply.status(error.statusCode || 500).send({
-    success: false,
-    error: error.name || "InternalServerError",
-    message: error.message
-  });
+    code: error.code || "INTERNAL_SERVER_ERROR",
+    message: error.message || "Something went wrong"
+  })
 }

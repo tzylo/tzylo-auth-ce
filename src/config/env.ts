@@ -58,8 +58,8 @@ export const ENV = {
 
   SMTP_HOST: getOptional("SMTP_HOST", "smtp.gmail.com"),
   SMTP_PORT: Number(getOptional("SMTP_PORT", "587")),
-  SMTP_USERNAME: getOptional("SMTP_USERNAME", ""),
-  SMTP_PASSWORD: getOptional("SMTP_PASSWORD", ""),
+  SMTP_USER: getOptional("SMTP_USER", ""),
+  SMTP_PASS: getOptional("SMTP_PASS", ""),
 
   REDIS_URL: getOptional("REDIS_URL", ""),
   REDIS_MAX_RETRIES: Number(getOptional("REDIS_MAX_RETRIES", "1")),

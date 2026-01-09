@@ -1,8 +1,8 @@
 import { db } from "../db/db";
 import { hashPassword, verifyPassword } from "../utils/password";
 import { signAccessToken, signRefreshToken } from "../utils/jwt";
-import { welcomeEmailTemplate } from "../templates/welcomeEmail";
-import { MailService } from "../services/MailService";
+import { OtpService } from "otp/otp.service";
+import { InvalidCredentialsError, AccountAlreadyExistsError, EmailAlreadyVerifiedError } from "errors/auth.errors";
 
 class AuthService {
   async register(email: string, password: string) {
@@ -12,7 +12,7 @@ class AuthService {
       where: { email: normalizedEmail },
     });
 
-    if (existing) throw new Error("Account already exists");
+    if (existing) throw new AccountAlreadyExistsError();
 
     const hashed = await hashPassword(password);
 
@@ -20,16 +20,15 @@ class AuthService {
       data: { email: normalizedEmail, password: hashed },
     });
 
-    const accessToken = signAccessToken(user.id, user.email);
-    const refreshToken = signRefreshToken(user.id, user.email);
+    const accessToken = signAccessToken(user.id, user.email, user.isVerified, user.role);
+    const refreshToken = signRefreshToken(user.id, user.email, user.isVerified, user.role);
 
     await db.auth.update({
       where: { id: user.id },
       data: { refreshToken },
     });
 
-    const template = welcomeEmailTemplate(normalizedEmail);
-    MailService.sendMail(normalizedEmail, template.subject, template.html).catch(() => {});
+    OtpService.generateOtp(email)
 
     const { password: _ignored, ...safeUser } = user;
 
@@ -43,13 +42,13 @@ class AuthService {
       where: { email: normalizedEmail },
     });
 
-    if (!user) throw new Error("Invalid credentials");
+    if (!user) throw new InvalidCredentialsError();
 
     const valid = await verifyPassword(password, user.password);
-    if (!valid) throw new Error("Invalid credentials");
+    if (!valid) throw new InvalidCredentialsError();
 
-    const accessToken = signAccessToken(user.id, user.email);
-    const refreshToken = signRefreshToken(user.id, user.email);
+    const accessToken = signAccessToken(user.id, user.email, user.isVerified, user.role);
+    const refreshToken = signRefreshToken(user.id, user.email, user.isVerified, user.role);
 
     await db.auth.update({
       where: { id: user.id },
@@ -73,7 +72,7 @@ class AuthService {
   }
 
   if (user.isVerified) {
-    return { message: "Email already verified" };
+    throw new EmailAlreadyVerifiedError();
   }
 
   const updatedUser = await db.auth.update({
@@ -84,7 +83,6 @@ class AuthService {
   const { password: _ignored, ...safeUser } = updatedUser;
 
   return {
-    message: "Email verified successfully",
     user: safeUser,
   };
 }

@@ -42,6 +42,7 @@ export async function buildApp(): Promise<FastifyInstance> {
     app.log.warn("COOKIE_SECRET not set cookies will NOT be signed.");
   }
 
+
   app.get("/", async () => ({
     status: "ok",
     message: "Auth Service CE is running",

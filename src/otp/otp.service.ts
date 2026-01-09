@@ -24,20 +24,17 @@ export class OtpService {
     // Generate cryptographically secure OTP
     const otp = crypto.randomInt(100000, 999999).toString();
 
-    // Store OTP
     if (isRedisAvailable()) {
       await RedisService.set(key, otp, 300);
     } else {
       otpStore.set(key, otp, 300);
     }
 
-    // Choose template
     const template =
       type === "forgot-password"
         ? forgotPasswordEmailTemplate(normalizedEmail, otp)
         : otpVerificationEmailTemplate(normalizedEmail, otp);
 
-    // Send mail (CE: no queue, direct sending)
     await MailService.sendMail(normalizedEmail, template.subject, template.html);
 
     return otp;

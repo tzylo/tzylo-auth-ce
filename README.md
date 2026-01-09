@@ -74,7 +74,7 @@ Everything else falls back to clean defaults.
 
 - **Node.js + TypeScript**
 - **Fastify** (high-performance HTTP server)
-- **Drizzle ORM / Prisma (your internal choice)**
+- **Prisma**
 - **SQLite / Postgres / MySQL / SQL Server**
 - **Nodemailer**
 - **Redis (optional, recommended)**
@@ -95,9 +95,9 @@ export const register = async (email: string, password: string) => {
 export const login = async (email: string, password: string) => {
   const res = await api.post("/login", { email, password });
 
-  if (res.data?.data?.accessToken) {
-    console.log(res.data.data.accessToken);
-    setAccessToken(res.data.data.accessToken);
+  if (res.data?.accessToken) {
+    console.log(res.data.accessToken);
+    setAccessToken(res.data.accessToken);
   }
 
   return res;
@@ -148,8 +148,6 @@ pnpm install
 pnpm dev
 ```
 
-If no `DATABASE_URL` is provided, **SQLite is used automatically**.
-
 ---
 
 ## ⚙️ Environment Variables
@@ -169,8 +167,8 @@ Below is the complete list of environment variables supported by **Tzylo Auth CE
 | **BCRYPT_SALT_ROUNDS**       | No       | `10`             | Salt rounds used for password hashing.                                                 |
 | **SMTP_HOST**                | No       | `smtp.gmail.com` | SMTP host for sending OTP emails.                                                      |
 | **SMTP_PORT**                | No       | `587`            | SMTP port.                                                                             |
-| **SMTP_USERNAME**            | No       | —                | SMTP login username.                                                                   |
-| **SMTP_PASSWORD**            | No       | —                | SMTP login password.                                                                   |
+| **SMTP_USER**                | No       | —                | SMTP login username.                                                                   |
+| **SMTP_PASS**                | No       | —                | SMTP login password.                                                                   |
 | **REDIS_URL**                | No       | —                | Redis connection URL (optional; in-memory fallback used if empty).                     |
 | **REDIS_MAX_RETRIES**        | No       | `1`              | Maximum retry attempts for Redis connection.                                           |
 | **APP_NAME**                 | No       | `Tzylo`          | Application name used in emails and metadata.                                          |
@@ -195,7 +193,56 @@ Below is the complete list of environment variables supported by **Tzylo Auth CE
 
 Designed to be easy to understand and extend.
 
+## 🚀 Running with Docker
+
+This repository includes a `Dockerfile` and `docker-compose.yml` for easy local setup.
+
+### Build Image
+
+From the project root:
+
+```bash
+docker build -t tzylo-auth-ce:v1.1.0 .
+```
+
 ---
+
+### Start Services
+
+Run using Docker Compose:
+
+```bash
+docker compose up -d
+```
+
+View logs:
+
+```bash
+docker compose logs -f
+```
+
+Stop services:
+
+```bash
+docker compose down
+```
+
+---
+
+### Rebuild After Changes
+
+If you modify the code:
+
+```bash
+docker compose build
+docker compose up -d
+```
+
+---
+
+### Environment Configuration
+
+Create a `.env` file with required environment variables before starting.
 
 ## 📝 Philosophy
 

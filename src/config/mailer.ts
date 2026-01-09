@@ -5,9 +5,9 @@ let transporter: Transporter | null = null;
 export let OTP_ENABLED = false;
 
 export const initMailer = async (): Promise<Transporter | null> => {
-  const { SMTP_HOST, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD } = ENV;
+  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = ENV;
 
-  if (!SMTP_HOST || !SMTP_PORT || !SMTP_USERNAME || !SMTP_PASSWORD) {
+  if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS) {
     console.log("📭 Mailer disabled — SMTP not configured.");
     OTP_ENABLED = false;
     transporter = null;
@@ -20,8 +20,8 @@ export const initMailer = async (): Promise<Transporter | null> => {
       port: Number(SMTP_PORT),
       secure: Number(SMTP_PORT) === 465,
       auth: {
-        user: SMTP_USERNAME,
-        pass: SMTP_PASSWORD,
+        user: SMTP_USER,
+        pass: SMTP_PASS,
       },
       tls: {
         rejectUnauthorized: false,
